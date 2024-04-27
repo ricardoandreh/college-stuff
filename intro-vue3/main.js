@@ -1,14 +1,13 @@
 const { createApp, ref } = Vue;
 
-createApp({
+const app = createApp({
   setup() {
-    const [product, description] = [
-      ref("Boots"), 
-      ref("description: that's a great pair of socks!")
-    ];
-
+    const product = ref("Socks");
+    const image = ref("./assets/images/socks_green.jpg");
+    const url = ref("https://www.linkedin.com/in/ricardoandreh/");
+    
     return {
-      product, description
+      product, image, url
     }
   }
-}).mount("#app");
+});
