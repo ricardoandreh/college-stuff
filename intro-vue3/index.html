@@ -14,11 +14,15 @@
         <div class="product-display">
           <div class="product-container">
             <div class="product-image">
-              <!-- src attribute bound to the image data -->
               <img :src="image" />
             </div>
             <div class="product-info">
               <h1>{{ product }}</h1>
+              <p v-if="inventory > 10">Em Estoque</p>
+              <p v-else-if="inventory <= 10 && inventory > 0">Quase esgotado!</p>
+              <p v-else>Fora de Estoque</p>
+              <p v-if="onSale">À Venda!</p>
+              <p v-show="inStock">(Disponível)</p>
               <a :href="url" target="_blank">Made by Ricardo André</a>
             </div>
           </div>
