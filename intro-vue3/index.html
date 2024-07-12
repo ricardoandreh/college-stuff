@@ -12,17 +12,22 @@
         <div class="nav-bar"></div>
 
         <div class="cart">Cart({{ cart }})</div>
-        
+
         <div class="product-display">
           <div class="product-container">
             <div class="product-image">
-              <img :src="image" />
+              <img
+                :class="[ !inStock ? 'out-of-stock-img' : '' ]"
+                :src="image"
+              />
             </div>
             <div class="product-info">
               <h1>{{ product }}</h1>
-              
+
               <p v-if="inventory > 10">Em Estoque</p>
-              <p v-else-if="inventory <= 10 && inventory > 0">Quase esgotado!</p>
+              <p v-else-if="inventory <= 10 && inventory > 0">
+                Quase esgotado!
+              </p>
               <p v-else>Fora de Estoque</p>
               <p v-if="onSale">À Venda!</p>
               <p v-show="inStock">(Disponível)</p>
@@ -33,12 +38,30 @@
               <ul v-for="size in sizes">
                 <li>{{ size }}</li>
               </ul>
-              <div v-for="variant in variants" :key="variant.id">
-                <span @mouseover="updateImage(variant.image)">{{ variant.color }}</span>
-              </div>
-              
-              <button class="button" @click="addToCart">Add to Cart</button>
-              <button class="button" @click="removeFromCart">Remove Item</button>
+              <div
+                v-for="variant in variants"
+                :key="variant.id"
+                @mouseover="updateImage(variant.image)"
+                class="color-circle"
+                :style="{ backgroundColor: variant.color }"
+              ></div>
+
+              <button
+                class="button"
+                :class="{ disabledButton: !inStock }"
+                :disabled="!inStock"
+                @click="addToCart"
+              >
+                Add to Cart
+              </button>
+              <button
+                class="button"
+                :class="{ disabledButton: cart <= 0 }"
+                :disabled="cart <= 0"
+                @click="removeFromCart"
+              >
+                Remove Item
+              </button>
               <br />
               <a :href="url" target="_blank">Made by Ricardo André</a>
             </div>
@@ -49,7 +72,7 @@
 
     <script src="./main.js"></script>
     <script>
-      const mountedApp = app.mount('#app');
+      const mountedApp = app.mount("#app");
     </script>
   </body>
 </html>

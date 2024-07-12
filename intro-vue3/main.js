@@ -4,7 +4,7 @@ const app = createApp({
   setup() {
     const cart = ref(0);
     const onSale = ref(true);
-    const inStock = ref(true);
+    const inStock = ref(false);
     const inventory = ref(100);
     const product = ref("Socks");
     const image = ref("./assets/images/socks_green.jpg");
@@ -19,7 +19,7 @@ const app = createApp({
     const addToCart = () => cart.value++;
     const removeFromCart = () => cart.value > 0 && cart.value--;
     const updateImage = (variantImage) => image.value = variantImage;
-
+    
     return {
       product, image, url, 
       inStock, inventory, onSale, 
