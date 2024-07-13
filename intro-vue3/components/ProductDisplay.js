@@ -13,6 +13,7 @@ app.component("product-display", {
   },
   emits: ["add-to-cart", "remove-from-cart"],
   setup(props) {
+    const reviews = ref([]);
     const onSale = ref(true);
     const inventory = ref(11);
     const product = ref("Socks");
@@ -39,16 +40,18 @@ app.component("product-display", {
     const inStock = computed(
       () => variants.value[selectedVariant.value].quantity
     );
-    const shipping = computed(() => (props.premium ? "Free" : 2.99));
+    const shipping = computed(() => props.premium ? "Grátis" : 2.99);
 
-    const updateVariant = (index) => (selectedVariant.value = index);
+    const updateVariant = (index) => selectedVariant.value = index;
+    const addReview = (review) => reviews.value.push(review);
 
     const cart = inject("cart");
 
     return {
-      onSale, product, selectedVariant, 
-      brand, url, variants, title, image, cart, 
-      inStock, shipping, inventory, updateVariant, 
+      reviews, onSale, product, 
+      selectedVariant, brand, url, variants, 
+      title, image, inStock, shipping, inventory, 
+      updateVariant, addReview, cart, 
     };
   },
   template: `
@@ -68,9 +71,9 @@ app.component("product-display", {
             Quase esgotado!
           </p>
           <p v-else>Fora de Estoque</p>
-          <p>Shipping: {{ shipping }}</p>
+          <p>Frete: {{ shipping }}</p>
 
-          <p v-show="onSale">{{ title }} is on sale.</p>
+          <p v-show="onSale">{{ title }} tá na promoção.</p>
 
           <ul v-for="detail, index in details" :key="index">
             <li>{{ detail }}</li>
@@ -100,9 +103,15 @@ app.component("product-display", {
           >
             Remove Item
           </button>
+
           <br />
           <a :href="url" target="_blank">Made by Ricardo André</a>
         </div>
       </div>
+          
+      <br />
+      <br />
+      <review-list v-if="reviews.length" :reviews="reviews" />
+      <review-form @review-submitted="addReview" />
     </div>`,
 });
