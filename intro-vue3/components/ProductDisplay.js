@@ -1,3 +1,5 @@
+const { inject } = Vue;
+
 app.component("product-display", {
   props: {
     premium: {
@@ -9,7 +11,7 @@ app.component("product-display", {
       required: true,
     },
   },
-
+  emits: ["add-to-cart", "remove-from-cart"],
   setup(props) {
     const onSale = ref(true);
     const inventory = ref(11);
@@ -39,15 +41,14 @@ app.component("product-display", {
     );
     const shipping = computed(() => (props.premium ? "Free" : 2.99));
 
-    const addToCart = () => cart.value++;
-    const removeFromCart = () => cart.value > 0 && cart.value--;
     const updateVariant = (index) => (selectedVariant.value = index);
+
+    const cart = inject("cart");
 
     return {
       onSale, product, selectedVariant, 
-      brand, url, variants, title, image, 
-      inStock, shipping, inventory, addToCart, 
-      removeFromCart, updateVariant, 
+      brand, url, variants, title, image, cart, 
+      inStock, shipping, inventory, updateVariant, 
     };
   },
   template: `
@@ -75,10 +76,6 @@ app.component("product-display", {
             <li>{{ detail }}</li>
           </ul>
 
-          <!-- <ul v-for="size in sizes">
-            <li>{{ size }}</li>
-          </ul> -->
-
           <div
             v-for="variant, index in variants"
             :key="variant.id"
@@ -91,7 +88,7 @@ app.component("product-display", {
             class="button"
             :class="{ disabledButton: !inStock }"
             :disabled="!inStock"
-            @click="addToCart"
+            @click="$emit('add-to-cart', variants[selectedVariant])"
           >
             Add to Cart
           </button>
@@ -99,7 +96,7 @@ app.component("product-display", {
             class="button"
             :class="{ disabledButton: cart <= 0 }"
             :disabled="cart <= 0"
-            @click="removeFromCart"
+            @click="$emit('remove-from-cart')"
           >
             Remove Item
           </button>
