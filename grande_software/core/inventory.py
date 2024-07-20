@@ -5,37 +5,33 @@ class Inventory:
     def __init__(self):
         self.guitars = []
 
-    def add_guitar(
-        self, serial_number, price, builder, model, typeg, back_wood, top_wood
-    ):
-        guitar = Guitar(
-            serial_number, price, builder, model, typeg, back_wood, top_wood
-        )
+    def add_guitar(self, serial_number, price, guitar_spec) -> None:
+        guitar = Guitar(serial_number, price, guitar_spec)
         self.guitars.append(guitar)
 
-    def get_guitar(self, serial_number):
+    def get_guitar(self, serial_number) -> Guitar | None:
         for guitar in self.guitars:
             if guitar.get_serial_number() == serial_number:
                 return guitar
 
         return None
 
-    def search_guitar(self, search_guitar):
+    def search_guitar(self, search_guitar) -> list[Guitar] | None:
         results = []
 
         for guitar in self.guitars:
-            if search_guitar.get_builder() != guitar.get_builder():
+            if search_guitar.get_builder() != guitar.get_spec().get_builder():
                 continue
 
             model = search_guitar.get_model().lower()
-            if model and model != "" and model != guitar.get_model().lower():
+            if model and model != "" and model != guitar.get_spec().get_model().lower():
                 continue
 
-            if search_guitar.get_typeg() != guitar.get_typeg():
+            if search_guitar.get_typeg() != guitar.get_spec().get_typeg():
                 continue
-            if search_guitar.get_back_wood() != guitar.get_back_wood():
+            if search_guitar.get_back_wood() != guitar.get_spec().get_back_wood():
                 continue
-            if search_guitar.get_top_wood() != guitar.get_top_wood():
+            if search_guitar.get_top_wood() != guitar.get_spec().get_top_wood():
                 continue
 
             results.append(guitar)

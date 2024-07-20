@@ -1,5 +1,5 @@
-from core.guitar import Guitar
 from core.inventory import Inventory
+from core.guitar_spec import GuitarSpec
 from core.enums import Builder, TypeG, Wood
 
 
@@ -9,26 +9,40 @@ def main():
     inventory.add_guitar(
         "V95693",
         1499.95,
-        Builder.FENDER.value,
-        "Stratocastor",
-        TypeG.ELETRIC.value,
-        Wood.ALDER.value,
-        Wood.ALDER.value,
+        GuitarSpec(
+            Builder.FENDER.value,
+            "Stratocastor",
+            TypeG.ELETRIC.value,
+            Wood.ALDER.value,
+            Wood.ALDER.value,
+        ),
+    )
+
+    inventory.add_guitar(
+        "V55206",
+        1329.79,
+        GuitarSpec(
+            Builder.FENDER.value,
+            "Telecaster",
+            TypeG.ELETRIC.value,
+            Wood.CEDAR.value,
+            Wood.MAPLE.value,
+        ),
     )
 
     inventory.add_guitar(
         "V95393",
         1195.49,
-        Builder.FENDER.value,
-        "Stratocastor",
-        TypeG.ELETRIC.value,
-        Wood.ALDER.value,
-        Wood.ALDER.value,
+        GuitarSpec(
+            Builder.FENDER.value,
+            "Stratocastor",
+            TypeG.ELETRIC.value,
+            Wood.ALDER.value,
+            Wood.ALDER.value,
+        ),
     )
 
-    whatErinLikes = Guitar(
-        " ",
-        0,
+    whatErinLikes = GuitarSpec(
         Builder.FENDER.value,
         "Stratocastor",
         TypeG.ELETRIC.value,
@@ -47,10 +61,10 @@ def main():
 
     for i, guitar in enumerate(guitars):
         print(
-            f"\n{i+1}. {guitar.get_builder()} {guitar.get_model()} {guitar.get_typeg()} guitar:".title()
+            f"\n{i+1}. {guitar.get_spec().get_builder()} {guitar.get_spec().get_model()} {guitar.get_spec().get_typeg()} guitar:".title()
         )
         print(
-            f"   {guitar.get_back_wood().capitalize()} na traseira e laterais e {guitar.get_top_wood().capitalize()} no tampo."
+            f"   {guitar.get_spec().get_back_wood().capitalize()} na traseira e laterais e {guitar.get_spec().get_top_wood().capitalize()} no tampo."
         )
         print(f"   Ela pode ser sua por apenas US$ {guitar.get_price()}!")
 
