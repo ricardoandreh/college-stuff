@@ -14,7 +14,7 @@ class Builder(Enum):
 
 class TypeG(Enum):
     ACOUSTIC = "acoustic"
-    ELETRIC = "eletric"
+    ELECTRIC = "electric"
 
 
 class Wood(Enum):

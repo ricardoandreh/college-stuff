@@ -3,70 +3,46 @@ from core.guitar_spec import GuitarSpec
 from core.enums import Builder, TypeG, Wood
 
 
-def main():
+def initializeInventory(inventory) -> None:
+    spec1 = GuitarSpec(
+        Builder.FENDER, "stratocastor", TypeG.ELECTRIC, Wood.ALDER, Wood.ALDER, 6
+    )
+
+    inventory.add_guitar("V95693", 1499.95, spec1)
+    inventory.add_guitar("V99999", 1599.95, spec1)
+
+    spec2 = GuitarSpec(
+        Builder.MARTIN, "D-18", TypeG.ACOUSTIC, Wood.MAHOGANY, Wood.ADIRONDACK, 6
+    )
+
+    inventory.add_guitar("122784", 5495.95, spec2)
+
+
+def main() -> None:
     inventory = Inventory()
-
-    inventory.add_guitar(
-        "V95693",
-        1499.95,
-        GuitarSpec(
-            Builder.FENDER.value,
-            "Stratocastor",
-            TypeG.ELETRIC.value,
-            Wood.ALDER.value,
-            Wood.ALDER.value,
-        ),
-    )
-
-    inventory.add_guitar(
-        "V55206",
-        1329.79,
-        GuitarSpec(
-            Builder.FENDER.value,
-            "Telecaster",
-            TypeG.ELETRIC.value,
-            Wood.CEDAR.value,
-            Wood.MAPLE.value,
-        ),
-    )
-
-    inventory.add_guitar(
-        "V95393",
-        1195.49,
-        GuitarSpec(
-            Builder.FENDER.value,
-            "Stratocastor",
-            TypeG.ELETRIC.value,
-            Wood.ALDER.value,
-            Wood.ALDER.value,
-        ),
-    )
+    initializeInventory(inventory)
 
     whatErinLikes = GuitarSpec(
-        Builder.FENDER.value,
-        "Stratocastor",
-        TypeG.ELETRIC.value,
-        Wood.ALDER.value,
-        Wood.ALDER.value,
+        Builder.FENDER, "Stratocastor", TypeG.ELECTRIC, Wood.ALDER, Wood.ALDER, 6
     )
 
-    guitars = inventory.search_guitar(whatErinLikes)
+    matching_guitars = inventory.search(whatErinLikes)
 
-    if guitars is None:
-        print("Desculpe Erin, não temos nada para você :(")
+    if matching_guitars is None:
+        print("Desculpe Erin, não temos nada para você")
 
         return None
 
-    print(f"Erin, talvez você goste desta{'s' if len(guitars) > 1 else ''}:")
+    print("Erin, talvez você goste destas: ")
+    for i, guitar in enumerate(matching_guitars):
+        guitar_spec = guitar.get_spec
 
-    for i, guitar in enumerate(guitars):
         print(
-            f"\n{i+1}. {guitar.get_spec().get_builder()} {guitar.get_spec().get_model()} {guitar.get_spec().get_typeg()} guitar:".title()
+            f"\n{i+1}. Guitarra: {guitar.get_serial_number()} {guitar_spec.get_builder().value} {guitar_spec.get_model()} {guitar_spec.get_typeg().value} guitar:".title(),
+            f"\n   - {guitar_spec.get_back_wood().value.capitalize()} na traseira e laterais",
+            f"\n   - {guitar_spec.get_top_wood().value.capitalize()} no tampo, com {guitar_spec.get_num_strings()} cordas",
+            f"\n   - Ela pode ser sua por apenas US$ {guitar.get_price():.2f}!",
         )
-        print(
-            f"   {guitar.get_spec().get_back_wood().capitalize()} na traseira e laterais e {guitar.get_spec().get_top_wood().capitalize()} no tampo."
-        )
-        print(f"   Ela pode ser sua por apenas US$ {guitar.get_price()}!")
 
 
 if __name__ == "__main__":

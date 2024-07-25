@@ -16,5 +16,6 @@ class Guitar:
     def set_price(self, new_price) -> None:
         self.price = new_price
 
+    @property
     def get_spec(self) -> GuitarSpec:
         return self.spec
