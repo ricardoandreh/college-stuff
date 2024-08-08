@@ -27,3 +27,8 @@ class Wood(Enum):
     ADIRONDACK = "adirondack"
     ALDER = "alder"
     SITKA = "sitka"
+
+
+class Style(Enum):
+    A = "a"
+    F = "f"

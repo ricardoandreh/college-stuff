@@ -1,26 +1,46 @@
 from core.guitar import Guitar
+from core.guitar_spec import GuitarSpec
+from core.instrument import Instrument
+from core.mandolin import Mandolin
+from core.mandolin_spec import MandolinSpec
 
 
 class Inventory:
     def __init__(self):
-        self.guitars = []
+        self.inventory = []
 
-    def add_guitar(self, serial_number, price, guitar_spec) -> None:
-        guitar = Guitar(serial_number, price, guitar_spec)
-        self.guitars.append(guitar)
+    def add_instrument(
+        self, serial_number: str, price: float, spec: GuitarSpec | MandolinSpec
+    ) -> None:
+        if isinstance(spec, GuitarSpec):
+            instrument = Guitar(serial_number, price, spec)
+        elif isinstance(spec, MandolinSpec):
+            instrument = Mandolin(serial_number, price, spec)
 
-    def get_guitar(self, serial_number) -> Guitar | None:
-        for guitar in self.guitars:
-            if guitar.get_serial_number() == serial_number:
-                return guitar
+        self.inventory.append(instrument)
+
+    def get_instrument(self, serial_number: str) -> Instrument | None:
+        for instrument in self.inventory:
+            if instrument.get_serial_number() == serial_number:
+                return instrument
 
         return None
 
-    def search(self, search_guitar) -> Guitar | None:
-        matching_guitars = []
+    def search(
+        self, search_spec: GuitarSpec | MandolinSpec
+    ) -> list[Guitar | Mandolin] | None:
+        results = []
 
-        for guitar in self.guitars:
-            if guitar.get_spec.matches(search_guitar):
-                matching_guitars.append(guitar)
+        if isinstance(search_spec, GuitarSpec):
+            for guitar in self.inventory:
+                if isinstance(guitar, Guitar) and guitar.spec.matches(search_spec):
+                    results.append(guitar)
 
-        return matching_guitars or None
+        elif isinstance(search_spec, MandolinSpec):
+            for mandolin in self.inventory:
+                if isinstance(mandolin, Mandolin) and mandolin.spec.matches(
+                    search_spec
+                ):
+                    results.append(mandolin)
+
+        return results or None
