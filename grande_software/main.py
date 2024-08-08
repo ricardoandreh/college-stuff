@@ -1,140 +1,155 @@
-from core.enums import Builder, Style, TypeG, Wood
-from core.guitar import Guitar
-from core.guitar_spec import GuitarSpec
+from enum import Enum
+
+from core.enums import Builder, InstrumentType, Style, Type, Wood
+from core.instrument import Instrument
+from core.instrument_spec import InstrumentSpec
 from core.inventory import Inventory
-from core.mandolin import Mandolin
-from core.mandolin_spec import MandolinSpec
+
+DIVIDER = f"{'-' * 32}"
 
 
-def show_instruments(matching_instruments: list[Guitar | Mandolin] | None) -> None:
+def show_instruments(matching_instruments: list[Instrument] | None) -> None:
     if matching_instruments is None:
-        print("...\nDesculpe Erin, não temos nada para você\n```")
+        print("...\nDesculpe, não temos nada para você\n```")
 
         return None
 
-    print(f"{'-' * 32}")
-    print("Erin, talvez você goste destas: ")
+    print(DIVIDER)
+    print("Talvez você goste desses instrumentos:")
     for i, instrument in enumerate(matching_instruments, 1):
-        instrument_spec = instrument.get_spec
-        instrument_name = instrument.__class__.__name__
-        is_guitar = isinstance(instrument_spec, GuitarSpec)
+        spec = instrument.get_spec
+        instrument_name = spec.get_property("instrument_type").value
+
+        properties = [
+            f"   - {property_name.replace('_', ' ').title()}: {property_value.value.capitalize() if isinstance(property_value, Enum) else property_value}"
+            for property_name, property_value in spec.get_properties.items()
+            if property_name != "instrument_type"
+        ]
 
         print(
-            f"\n{i}. {instrument_name}: {instrument.get_serial_number()} {instrument_spec.get_builder().value} {instrument_spec.get_model()} {instrument_spec.get_typeg().value} {instrument_name}:".title(),
-            f"\n   - {instrument_spec.get_back_wood().value.capitalize()} na traseira e laterais",
-            f"\n   - {instrument_spec.get_top_wood().value.capitalize()} no tampo,",
-            f"com {f'{instrument_spec.get_num_strings()} cordas' if is_guitar else f'o estilo {instrument_spec.get_style().value.upper()}'}"
-            f"\n   - Ela pode ser sua por apenas US$ {instrument.get_price():.2f}!",
+            f"\n{i}. {instrument_name}: '{instrument.get_serial_number()}' {spec.get_property('builder').value} {spec.get_property('model')} {spec.get_property('type').value} {instrument_name}:\n".title()
+            + "\n".join(properties),
+            f"\n   - Ela pode ser sua por apenas R$ {instrument.get_price():.2f}",
         )
-    print(f"{'-' * 32}")
+    print(DIVIDER)
 
 
 def initialize_inventory(inventory: Inventory) -> None:
-    spec1 = GuitarSpec(
-        Builder.FENDER,
-        "stratocastor",
-        TypeG.ELECTRIC,
-        Wood.ALDER,
-        Wood.ALDER,
-        6,
-    )
+    properties = {
+        "instrument_type": InstrumentType.GUITAR,
+        "builder": Builder.FENDER,
+        "model": "stratocastor",
+        "type": Type.ELECTRIC,
+        "top_wood": Wood.ALDER,
+        "back_wood": Wood.ALDER,
+        "num_strings": 6,
+    }
 
-    inventory.add_instrument("V95693", 1499.95, spec1)
-    inventory.add_instrument("V99999", 1599.95, spec1)
+    inventory.save("V95693", 1499.97, InstrumentSpec(properties))
+    inventory.save("V99999", 2174.49, InstrumentSpec(properties))
 
-    spec2 = GuitarSpec(
-        Builder.MARTIN,
-        "D-18",
-        TypeG.ACOUSTIC,
-        Wood.MAHOGANY,
-        Wood.ADIRONDACK,
-        6,
-    )
+    properties = {
+        "instrument_type": InstrumentType.GUITAR,
+        "builder": Builder.MARTIN,
+        "model": "Les Paul",
+        "type": Type.ELECTRIC,
+        "top_wood": Wood.MAHOGANY,
+        "back_wood": Wood.ADIRONDACK,
+        "num_strings": 6,
+    }
 
-    inventory.add_instrument("122784", 5495.95, spec2)
+    inventory.save("V22784", 5495.27, InstrumentSpec(properties))
 
-    spec3 = MandolinSpec(
-        Builder.FENDER,
-        "stratocastor",
-        TypeG.ELECTRIC,
-        Wood.ALDER,
-        Wood.ALDER,
-        Style.F,
-    )
+    properties = {
+        "instrument_type": InstrumentType.MANDOLIN,
+        "builder": Builder.GIBSON,
+        "model": "F5-G",
+        "type": Type.ACOUSTIC,
+        "top_wood": Wood.MAPLE,
+        "back_wood": Wood.MAPLE,
+        "style": Style.A,
+    }
 
-    inventory.add_instrument("V95693", 1499.95, spec3)
-    inventory.add_instrument("V99999", 1599.95, spec3)
+    inventory.save("V73832", 3459.99, InstrumentSpec(properties))
 
-    spec4 = MandolinSpec(
-        Builder.MARTIN,
-        "D-18",
-        TypeG.ACOUSTIC,
-        Wood.MAHOGANY,
-        Wood.ADIRONDACK,
-        Style.A,
-    )
+    properties = {
+        "instrument_type": InstrumentType.BANJO,
+        "builder": Builder.GIBSON,
+        "model": "RB-3",
+        "type": Type.ACOUSTIC,
+        "num_strings": 5,
+        "back_wood": Wood.MAPLE,
+    }
 
-    inventory.add_instrument("V22784", 5495.95, spec4)
+    inventory.save("V46257", 674.49, InstrumentSpec(properties))
+    inventory.save("V85121", 1597.95, InstrumentSpec(properties))
 
 
 def main() -> None:
     inventory = Inventory()
     initialize_inventory(inventory)
 
-    ...
+    ...  # Buscar instrumentos
 
-    whatErinLikes = GuitarSpec(
-        Builder.FENDER,
-        "Stratocastor",
-        TypeG.ELECTRIC,
-        Wood.ALDER,
-        Wood.ALDER,
-        6,
-    )
+    properties = {
+        "builder": Builder.GIBSON,
+        "type": Type.ACOUSTIC,
+        "back_wood": Wood.MAPLE,
+    }
+    client_spec = InstrumentSpec(properties)
+    matching_instruments = inventory.search(client_spec)
 
-    matching_instruments = inventory.search(whatErinLikes)
     show_instruments(matching_instruments)
 
-    ...
+    ...  # NÃO buscar instrumentos
 
-    whatErinLikes = GuitarSpec(
-        Builder.RYAN,
-        "Stratocastor",
-        TypeG.ACOUSTIC,
-        Wood.CEDAR,
-        Wood.SITKA,
-        6,
-    )
+    properties = {
+        "builder": Builder.RYAN,
+        "model": "Stratocastor",
+        "type": Type.ACOUSTIC,
+        "top_wood": Wood.CEDAR,
+        "back_wood": Wood.SITKA,
+    }
+    client_spec = InstrumentSpec(properties)
+    matching_instruments = inventory.search(client_spec)
 
-    matching_instruments = inventory.search(whatErinLikes)
     show_instruments(matching_instruments)
 
-    ...
+    ...  # Buscar instrumentos
 
-    whatErinLikes = MandolinSpec(
-        Builder.MARTIN,
-        "D-18",
-        TypeG.ACOUSTIC,
-        Wood.MAHOGANY,
-        Wood.ADIRONDACK,
-        Style.A,
-    )
+    properties = {
+        "builder": Builder.MARTIN,
+        "type": Type.ELECTRIC,
+        "top_wood": Wood.MAHOGANY,
+        "back_wood": Wood.ADIRONDACK,
+    }
+    client_spec = InstrumentSpec(properties)
+    matching_instruments = inventory.search(client_spec)
 
-    matching_instruments = inventory.search(whatErinLikes)
     show_instruments(matching_instruments)
 
-    ...
+    ...  # Buscar instrumentos
 
-    whatErinLikes = MandolinSpec(
-        Builder.OLSON,
-        "D-18",
-        TypeG.ELECTRIC,
-        Wood.BRAZILIAN_ROSEWOOD,
-        Wood.ADIRONDACK,
-        Style.F,
-    )
+    properties = {
+        "type": Type.ELECTRIC,
+        "top_wood": Wood.ALDER,
+        "num_strings": 6,
+    }
+    client_spec = InstrumentSpec(properties)
+    matching_instruments = inventory.search(client_spec)
 
-    matching_instruments = inventory.search(whatErinLikes)
+    show_instruments(matching_instruments)
+
+    ...  # NÃO buscar instrumentos
+
+    properties = {
+        "builder": Builder.OLSON,
+        "back_wood": Wood.ADIRONDACK,
+        "style": Style.F,
+    }
+    client_spec = InstrumentSpec(properties)
+    matching_instruments = inventory.search(client_spec)
+
     show_instruments(matching_instruments)
 
 

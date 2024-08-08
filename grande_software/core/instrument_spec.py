@@ -1,37 +1,25 @@
-from abc import ABC, abstractmethod
-
-from core.enums import Builder, TypeG, Wood
+from enum import Enum
 
 
-class InstrumentSpec(ABC):
-    def __init__(
-        self,
-        builder: Builder,
-        model: str,
-        typeg: TypeG,
-        back_wood: Wood,
-        top_wood: Wood,
-    ):
-        self.builder = builder
-        self.model = model
-        self.typeg = typeg
-        self.back_wood = back_wood
-        self.top_wood = top_wood
+class InstrumentSpec:
+    def __init__(self, properties=None):
+        if properties is None:
+            self.properties = {}
+        else:
+            self.properties = properties.copy()
 
-    def get_builder(self) -> Builder:
-        return self.builder
+    def get_property(self, property_name: str) -> str | int | Enum:
+        return self.properties.get(property_name)
 
-    def get_model(self) -> str:
-        return self.model
+    @property
+    def get_properties(self) -> dict[str, str | int | Enum]:
+        return self.properties
 
-    def get_typeg(self) -> TypeG:
-        return self.typeg
+    def matches(self, other_spec) -> bool:
+        for property_name in other_spec.get_properties:
+            if self.properties.get(property_name) != other_spec.get_property(
+                property_name
+            ):
+                return False
 
-    def get_back_wood(self) -> Wood:
-        return self.back_wood
-
-    def get_top_wood(self) -> Wood:
-        return self.top_wood
-
-    @abstractmethod
-    def matches(self, other_spec) -> bool: ...
+        return True

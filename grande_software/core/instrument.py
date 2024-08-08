@@ -1,13 +1,8 @@
-from abc import ABC
-
-from core.guitar_spec import GuitarSpec
-from core.mandolin_spec import MandolinSpec
+from core.instrument_spec import InstrumentSpec
 
 
-class Instrument(ABC):
-    def __init__(
-        self, serial_number: str, price: float, spec: GuitarSpec | MandolinSpec
-    ):
+class Instrument:
+    def __init__(self, serial_number: str, price: float, spec: InstrumentSpec):
         self.serial_number = serial_number
         self.price = price
         self.spec = spec
@@ -22,5 +17,5 @@ class Instrument(ABC):
         self.price = price
 
     @property
-    def get_spec(self) -> GuitarSpec | MandolinSpec:
+    def get_spec(self) -> InstrumentSpec:
         return self.spec
